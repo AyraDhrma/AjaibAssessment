@@ -15,7 +15,6 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(ResourceApiModel.success(data = mainRepository.getRepoFromUser(username)))
         } catch (e: Exception) {
             emit(ResourceApiModel.error(data = null, message = e.localizedMessage ?: "Something Went Wrong"))
-
         }
     }
 

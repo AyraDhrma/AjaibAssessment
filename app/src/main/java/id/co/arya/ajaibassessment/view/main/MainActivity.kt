@@ -4,8 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import id.co.arya.ajaibassessment.databinding.ActivityMainBinding
+import id.co.arya.ajaibassessment.datasource.response.RepositoryListResponse
 import id.co.arya.ajaibassessment.utils.Status
+import id.co.arya.ajaibassessment.utils.hide
+import id.co.arya.ajaibassessment.utils.show
+import id.co.arya.ajaibassessment.utils.showToast
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,18 +39,26 @@ class MainActivity : AppCompatActivity() {
             it?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        println("loading")
+                        viewBinding.progressCircularMain.show()
                     }
                     Status.SUCCESS -> {
-                        println(resource.data as String)
+                        viewBinding.progressCircularMain.hide()
+                        resource.data?.let { it1 -> setToRepositoryList(it1) }
                     }
                     Status.ERROR -> {
-                        println("Error Connection")
+                        viewBinding.progressCircularMain.hide()
+                        showToast(this, resource.message.toString())
                     }
                 }
             }
         })
     }
 
+    private fun setToRepositoryList(data: RepositoryListResponse) {
+        val adapter = RepositoryListRecyclerAdapter(data)
+        viewBinding.listRepository.hasFixedSize()
+        viewBinding.listRepository.layoutManager = LinearLayoutManager(this)
+        viewBinding.listRepository.adapter = adapter
+    }
 
 }
